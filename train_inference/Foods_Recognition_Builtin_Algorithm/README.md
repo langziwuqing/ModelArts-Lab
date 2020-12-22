@@ -2,72 +2,19 @@
 
 # 使用ResNet50预置算法基于海量数据训练美食分类模型
 
-本案例将介绍怎样使用ModelArts数据标注能力和预置算法ResNet50基于海量美食数据训练一个美食分类模型。
+本案例将介绍怎样使用ModelArts数据标注能力和AI市场中ModelArts官方发布的`ResNet50`算法，基于海量美食数据训练一个美食分类模型。
+
+ModelArts的AI市场有丰富的算法，使用这些算法，无需自己开发训练代码和推理代码，只要准备并标注好数据，就可以轻松快速训练并部署模型。
 
 ## 准备工作
 
-如果是第一次使用ModelArts服务，在使用之前需要做如下准备工作。
-
-
-### 生成访问密钥
-
-登陆华为云控制台访问账号中心，用户新增访问密钥并下载到本地保存，操作步骤如下：
-
-**步骤 1** &#160; &#160;  点击[此链接](https://www.huaweicloud.com/product/modelarts.html)，登录华为云控制台。
-
-**步骤 2** &#160; &#160; 点击[此链接](https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey)，进入我的凭证页面。
-
-**步骤 3** &#160; &#160; 在“我的凭证”页面切换到“访问密钥”页签，执行“新建访问密钥”操作，输入登陆密码和短信验证码后，密钥会自动生成并下载到本地，文件名为“credentials.csv”。请参考图3。
-
-图3 新增访问密钥
-
-![food](./img/新增访问秘钥.png)
-
-### 设置ModelArts全局配置
-
-登陆[ModelArts服务控制台](https://console.huaweicloud.com/modelarts/?region=cn-north-4&locale=zh-cn#/manage/dashboard)，在“全局配置”中设置全局访问密钥，具体操作步骤如下：
-
-**步骤 1** &#160; &#160; 登陆ModelArts服务页面，通过左侧导航栏进入到“全局配置”页面。请参考图4。
-
-图4 全局配置界面
-
-![food](./img/全局配置.png)
-
-**步骤 2** &#160; &#160; 执行“添加访问密钥”操作，输入“credentials.csv”文件中的“Access Key”和“Secret Access Key”信息，执行确定操作，完成全局密钥的设置。请参考图5。
-
-图5 添加访问密钥
-
-![food](./img/添加访问秘钥.png)
-
-### 创建OBS桶
-
-**OBS**，即**Object Storage Service**，对象存储服务，是华为云上提供云上数据储存的服务。在使用ModelArts之前您需要创建一个OBS桶。 
-
-登录[OBS管理控制台](https://storage.huaweicloud.com/obs/#/obs/manager/buckets)， 页面右上角单击"**创建桶**"，系统弹出如下图所示的对话框，选择"区域"为"华北-北京四"，输入自定义的桶名称，其他选项保持默认即可，最后点击页面下方"立即创建"按钮即可成功创建。
-
-### 下载并登录OBS Browser+
-
-安装OBS客户端，可以方便上传和下载数据。
-
-如果是Windows操作系统，点击[此链接](https://support.huaweicloud.com/browsertg-obs/obs_03_1003.html)，根据操作系统版本下载相应版本的OBS Browser+，并点击`.exe`文件进行安装。
-
-然后参考[此文档](https://support.huaweicloud.com/browsertg-obs/obs_03_1004.html)，使用AK SK登录OBS Browser+。
-
-如果是Mac操作系统，可以参考[此文档](https://support.huaweicloud.com/clientogw-obs/zh-cn_topic_0045829055.html)下载和安装OBS Browser。
-
-**注意**：AK SK从访问秘钥文件中获取。
-
-### 创建OBS文件夹
-
-登录OBS Browser+（或者OBS Browser，下同），点击进入一个OBS桶，点击“新建文件夹”按钮，即可创建文件夹：
-
-![food](./img/创建文件夹.png)
+参考[此文档](https://github.com/huaweicloud/ModelArts-Lab/tree/master/docs/ModelArts准备工作)，完成ModelArts准备工作。只需要完成注册华为云账号、生成访问密钥并完成ModelArts全局配置、创建OBS桶、使用OBS Browser+这四个步骤即可。
 
 ## 准备数据
 
 ### 下载数据
 
-点击[此链接](https://modelarts-labs.obs.cn-north-1.myhuaweicloud.com/end2end/foods_recongition/foods_recongition_23.tar.gz)，下载数据集压缩包至本地，解压，可以得到文件夹`foods_recongition_23`，其中的`train`目录是训练数据集，`test`目录是测试数据集。
+点击[此链接](https://modelarts-labs-bj4.obs.cn-north-4.myhuaweicloud.com:443/end2end/foods_recongition/foods_recongition_23.zip)，下载数据集压缩包至本地，解压，可以得到文件夹`foods_recongition_23`，其中的`train`目录是训练数据集，`test`目录是测试数据集。
 
 该数据集共包含23类美食，及其部分标注数据。23类美食的种类如下所示：
 
@@ -99,7 +46,7 @@
 
 ### 上传数据至OBS
 
-在OBS Browser+中，进入进入刚刚创建的“华为北京四”区域的OBS桶，然后点击上传按钮，上传本地文件夹`foods_recongition_23`至OBS桶：
+在OBS Browser+中，进入刚刚创建的“华北北京四”区域的OBS桶，然后点击上传按钮，上传本地文件夹`foods_recongition_23`至OBS桶，上传耗时取决于网速，网络较好情况下耗时约2分钟。
 
 ![food](./img/上传文件夹.png)
 
@@ -107,13 +54,13 @@
 
 ### 创建数据集
 
-点击[此链接](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/dataLabel_Beta)，进入ModelArts数据集。请确保区域在“华北-北京四”，本案例所有操作在“华北-北京四”。
+点击[此链接](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/dataset)，进入ModelArts数据集。请确保区域在“华北-北京四”，本案例所有操作在“华北-北京四”。
 
 点击页面上的“创建数据集”按钮， 创建数据集页面填写示例如下：
 
 ![create_dataset](./img/创建数据集1.png)
 
-![create_dataset](./img/创建数据集2.png)
+![create_dataset](./img/创建数据集2.jpg)
 
 数据集名称：自定义
 
@@ -139,7 +86,7 @@
 
 点击“全部”页面的“同步数据源”按钮，数据同步完成后，右上角会出现“数据同步完成”的提示。“同步数据源”按钮的位置如下图所示：
 
-![sync_data](./img/sync_data.png)
+![sync_data](./img/sync_data.jpg)
 
 #### 步骤三，手工标注图片
 
@@ -147,7 +94,7 @@
 
 点击图片的左上角的选择框，选中图片，可以批量选择图片，然后输入标签名，可以从下拉列表中选择已有标签，然后点击“确认”按钮。如下图所示：
 
-![food](./img/select_image.png)
+![food](./img/select_image.jpg)
 
 按照此方法标注完所有数据。
 
@@ -155,11 +102,9 @@
 
 点击“返回数据集预览”按钮，进入数据集主页：
 
-![food](./img/返回数据集主页.png)
+![food](./img/返回数据集主页.jpg)
 
-
-
-点击“发布”按钮，发布数据集：
+点击“发布”按钮，训练集比例填写0.8，发布数据集：
 
 ![food](./img/发布数据集.png)
 
@@ -167,81 +112,147 @@
 
 ![food](./img/返回数据集列表.png)
 
-## 一键模型上线
+## 订阅算法
 
-数据集发布成功后，可以使用一键模型上线功能，训练模型，并将模型部署成在线API服务。
+本实验中，我们从AI市场订阅ModelArts官方发布的图像分类算法`ResNet50`来训练模型。
 
-### 创建一键模型上线任务
+点击进入AI市场[ResNet50算法主页](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/aiMarket/aiMarketModelDetail/overview?modelId=40b66195-5bbe-463d-b8a2-03e57073538d&type=algo)，点击页面右上方的![food](./img/订阅.png)按钮。然后点击页面下方的![food](./img/下一步.png)按钮，再点击![food](./img/确认付款.png)按钮，最后点击![food](./img/确定.png)按钮进入我的订阅页面，可以看到刚刚订阅的算法。点击![food](./img/应用控制台.png)超链接，进入算法管理页面。
 
-点击“任务创建”按钮：
+点击“同步”按钮，同步算法，可以点击![food](./img/刷新.png)按钮，刷新状态。当状态变成就绪时，表示同步成功。
 
-![food](./img/任务创建.png)
+![food](./img/同步算法.png)
 
-进入“一键模型上线”任务创建页面，按照以下样例和指导填写参数：
+## 模型训练
 
-![food](./img/一键模型上线1.png)
+我们使用创建的美食数据集和订阅的图像分类算法，提交一个图像分类的训练作业，训练会生成一个美食分类模型。
+
+### 创建训练作业
+
+在算法管理中，点击“创建训练作业”按钮，进入训练作业的创建页面。
+
+![food](./img/创建训练作业.png)
+
+按照如下提示，填写创建训练作业的参数。
+
+![food](./img/训练作业参数1.png)
+
+计费模式：按需计费
 
 名称：自定义
 
-![food](./img/一键模型上线2.png)
+算法来源：算法管理
 
-预置算法：选择`ResNet_v1_50`
+算法名称：`图像分类-ResNet_v1_50`
 
-运行参数：`ResNet_v1_50`自带默认运行参数。将`max_oepoches`改为20，其他运行参数保持默认。这些运行参数会控制的模型训练过程，有经验的用户可以调节这些运行参数。
+数据来源：数据集
 
-![food](./img/一键模型上线3.png)
+选择数据集和版本：选择刚刚发布的美食数据集及其版本
 
-训练输出位置：选择OBS路径`/modelarts-course/foods_recongition_23/output/`（output文件夹需要自己创建，创建方式见准备工作中的创建OBS文件夹），训练输出位置用来保存训练输得到的模型和TensorBoard日志。
+![food](./img/训练作业参数2.png)
 
-作业日志路径：选择OBS路径`/modelarts-course/foods_recongition_23/log/`（log文件夹需要自己创建，创建方式同训练输出位置），用于保存训练日志文件。
+训练输出：选择OBS路径`/modelarts-course/food_recognition/output/`（此OBS路径如果不存在，可以使用OBS客户端创建）。训练输出位置用来保存训练生成的模型。
 
-资源池：公共资源池
+调优参数：用于设置算法中的超参。算法会加载默认参数，但是可以更改和添加参数。设置`learning_rate_strategy=20:0.001`，表示训练20轮，学习率固定为0.001。其他调优参数保持默认。
 
-类型：GPU
+![food](./img/训练作业参数3.png)
 
-规格：`CPU：8 核 64GiB GPU：1 * nvidia-p100 16GiB`
+作业日志路径：选择OBS路径`/modelarts-course/food_recognition/log/`（此OBS路径如果不存在，可以使用OBS客户端创建）。
 
-计算节点：1
+![food](./img/训练作业参数4.png)
 
-![food](./img/一键模型上线4.png)
+资源池：公共资源池。
 
-部署：公共资源池
+规格：V100 GPU，如图所示。
 
-计算节点规格：`CPU：2 核 8 GiB`。如果开通了GPU部署权限，可以尝试GPU部署。
+计算节点个数：选择1，表示我们运行一个单机训练任务。
 
-计算节点个数：1。如果是多个计算节点，就是多实例部署，可以提高API的并发数。
+所有字段填写好之后，确认参数无误，点击“下一步”按钮，然后点击“提交”按钮，开始训练。
 
-填写好这些参数后，点击“下一步”按钮，确认参数无误，然后提交“提交”按钮。
+使用V100 GPU资源，训练时长预计3分钟左右。
 
-一键模型上线任务包含了三个子任务，首先会在[训练作业](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/trainingjobs)中创建一个训练作业，会训练得到一个模型，然后将训练所得模型导入到[模型管理](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/models/)中，最后将模型在[在线服务](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/webservice/real-time)中部署为一个在线API服务。以一键模型上线任务的名称为前缀可以找到这些任务。
+### 查看训练结果
 
-训练作业耗时5分钟左右，模型导入耗时3分钟左右，启动在线服务耗时5分钟作业。
+训练作业完成后，可以查看训练作业的运行结果。
 
-### 查看训练作业
+在训练作业页面，点击作业名称，进入配置信息页面。可以查看到训练作业的详情。
 
-点击进入[训练作业](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/trainingjobs)，通过一键模型上线任务的名称找到对应的训练作业，点击作业名称进入作业详情。
+![food](./img/训练详情.png)
 
-“配置信息”页面展示了训练作业的配置详情：
+切换到“日志”页签，查看训练作业的训练日志，还可以下载日志到本地查看。
 
-![food](./img/配置信息.png)
+训练日志中会打印一些训练的精度和训练速度等信息。
 
-“日志”页面展示了训练过程日志，可以看到模型在训练过程中打印的日志，比如模型精度、训练速度等，同时也可以下载日志文件到本地查看：
+训练生成的模型会放到训练输出位置OBS路径下，可以直接下载到本地使用。
 
-![food](./img/日志.png)
+## 模型部署
 
-## 在线服务测试
+### 导入模型
+
+点击“创建模型”按钮，创建模型。
+
+![food](./img/创建模型.png)
+
+按照如下提示，填写导入模型的字段。
+
+![food](./img/导入模型字段1.png)
+
+名称：自定义
+
+版本：0.0.1
+
+![food](./img/导入模型字段2.png)
+
+元模型来源：从训练中选择
+
+选择训练作业及版本：刚刚的训练作业及版本，会自动加载
+
+部署类型：默认
+
+推理代码：自动加载
+
+其他保持默认。
+
+点击“立即创建”按钮，开始导入模型，等待模型导入成功。
+
+### 部署上线
+
+等待模型状态为正常，然后点击部署下拉框中的“在线服务”，如下图所示：
+
+![food](./img/部署上线.png)
+
+按照如下指导填写参数：
+
+![food](./img/部署上线参数1.png)
+
+计费模式：按需计费
+
+名称：自定义
+
+是否自动停止：开启，一小时后。会在1小时后自动停止该在线服务。
+
+![food](./img/部署上线参数2.png)
+
+资源池：公共资源池。如果您购买了专属资源池，也可以选择专属资源池部署。
+
+模型来源：我的模型
+
+模型：选择刚刚导入美食分类的模型和版本，会自动加载。
+
+计算节点规格：选择`CPU：2 核 8 GiB`，CPU实例。
+
+计算节点个数：1。如果想要更高的并发数，可以增加计算节点个数，会以多实例的方式部署。
+
+填写好所有参数，点击“下一步”按钮，然后点击“提交”按钮，最后点击查看服务详情。状态栏会显示部署进度，大概3分钟左右会部署完成。
+
+### 在线服务测试
 
 在线服务的本质是RESTful API，可以通过HTTP请求访问，在本案例中，我们直接在网页上访问在线服务。
 
-使用一键模型上线任务的名称为前缀，在[在线服务](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/webservice/real-time)中找到相应的在线服务，等待启动成功。
+等待在线服务的状态变成运行中。
 
-然后点击“预测”按钮，进入在线服务预测页面。如下图所示：
+切换到“预测”页签。点击上传按钮，上传本地的`foods_recongition_23\test`目录中的图片，然后点击“预测”按钮，进行测试：
 
-![food](./img/打开在线服务.png)
-
-点击上传按钮，上传本地的`foods_recongition_23\test`目录中的图片，然后点击“预测”按钮，进行测试：
-
-![food](./img/预测.png)
+![food](./img/上传测试图片.png)
 
 预测结果会出现在右边的输出框：
 
@@ -251,9 +262,7 @@
 
 也可以从网上下载23种美食范围内的图片来测试，评估模型的准确度。
 
-作为在线RESTful API，还可以通过HTTP请求访问，在调用指南中有该API的详细信息和调用指南文档，如下图所示：
-
-![food](./img/调用指南.png)
+作为在线RESTful API，还可以通过HTTP请求访问，在调用指南页签中有该API的详细信息和调用指南文档。
 
 ## 关闭在线服务
 
@@ -262,6 +271,12 @@
 ![food](./img/停止服务.png)
 
 当需要使用该在线服务的时候，可以重新启动该在线服务。
+
+### 确认关闭所有计费项
+
+点击[此链接](https://console.huaweicloud.com/modelarts/?region=cn-north-4#/manage/dashboard)，进入ModelArts总览页面，如果所有计费中的数字都是0，表示所有计费项都关闭了。
+
+![train](./img/总览.PNG)
 
 至此，该案例完成。
 
